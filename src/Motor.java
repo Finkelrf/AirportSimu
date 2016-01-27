@@ -21,11 +21,24 @@ public class Motor {
 	public static void stepUp(){
 		c.add(Calendar.MINUTE, simStep);
 	}
+	public static boolean isWeekend(){
+		int weekDay = c.get(Calendar.DAY_OF_WEEK);
+		if(weekDay>1 && weekDay>7)
+			return true;
+		else
+			return false;
+	}
 	
 	//return how long has passed in minutes
 	public static long getTimePassed(Date olderDate){
-		return (c.getTimeInMillis() - olderDate.getTime())/(1000*60);
+		long delay = (c.getTimeInMillis() - olderDate.getTime())/(1000*60);
+		return (delay);
 	}
+	
+//	public static void main(String[] args) {
+//		Motor.setStartDate();
+//		System.out.println(Motor.isWeekend());
+//	}
 
 }
 
