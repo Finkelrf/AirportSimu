@@ -3,27 +3,29 @@ import java.util.Date;
 
 
 public class Motor {
-	Calendar c;
-	int simStep; //in minutes
+	private static Calendar c = Calendar.getInstance();
+	private static int simStep; //in minutes
 	
-	public Motor() {
-		this.c = Calendar.getInstance();
+	public static void setStartDate() {
 		c.set(2016,1,1,0,0,0);
-		this.simStep = 1;
+		simStep = 1;
 	}
-	public void printSimulationCalendar(){
-		System.out.println(c.getTime());
-	}
-
-	public void stepUp(){
-		c.add(Calendar.MINUTE, this.simStep);
+	public Calendar getSimulationCalendar(){
+		return c;
 	}
 	
-	public int getTimePassed(Calendar calStart){
-		//if(calStart.getTime())
+	public static Date getNowDate(){
+		return c.getTime();
 	}
 
-
+	public static void stepUp(){
+		c.add(Calendar.MINUTE, simStep);
+	}
+	
+	//return how long has passed in minutes
+	public static long getTimePassed(Date olderDate){
+		return (c.getTimeInMillis() - olderDate.getTime())/(1000*60);
+	}
 
 }
 

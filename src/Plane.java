@@ -3,9 +3,10 @@ import java.util.Date;
 
 
 public class Plane {
-	int id;
-	STATE state;
-	Calendar calStateStar;
+	private int id;
+	private STATE state;
+	private Date date;
+	
 	enum STATE{
 		NOTIFY_TOWER,
 		WAITING_TRACK,
@@ -16,11 +17,10 @@ public class Plane {
 		WAITING_PASSANGERS_LEAVE
 	}
 	
-	public Plane(Calendar c) {
+	public Plane(Date date) {
 		this.id = 0;
 		this.state = STATE.NOTIFY_TOWER;
-		this.calStateStar = Calendar.getInstance();
-		this.calStateStar.setTime((Date) c.getTime().clone());
+		this.date = date;
 	}
 	
 	public void setId(int id){
@@ -36,9 +36,9 @@ public class Plane {
 			return false;
 		}
 	}
-	
-	public void printSimulationCalendar(){
-		System.out.println(this.calStateStar.getTime());
+	public Date getLastStateDate(){
+		return this.date;
 	}
+
 	
 }
