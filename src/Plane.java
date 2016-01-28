@@ -7,38 +7,26 @@ public class Plane {
 	private Date date;
 	
 	public enum PLANE_STATE{
-		NOTIFY_TOWER,
-		WAITING_TRACK,
-		APROACHE,
-		LANDING,
-		TAXING,
-		NOTIFY_ARRIVE,
-		WAITING_PASSANGERS_LEAVE
+		AIR,
+		GATE,
+		TRACK,
+		TAXIWAY,
 	}
 	
 	public Plane(Date date) {
 		this.id = 0;
-		this.state = PLANE_STATE.NOTIFY_TOWER;
 		this.date = date;
+		this.state = PLANE_STATE.AIR;
 	}
 	
 	public int setId(int id){
 		this.id = id;
-		this.state = PLANE_STATE.WAITING_TRACK;
 		return this.id;
 	}
 	public int getId(){
 		return id;
 	}
 	
-	public boolean permissionToLand(){
-		if(this.state == PLANE_STATE.WAITING_TRACK){
-			this.state = PLANE_STATE.APROACHE;
-			return true;
-		}else{
-			return false;
-		}
-	}
 	public Date getLastStateDate(){
 		return this.date;
 	}
@@ -47,18 +35,28 @@ public class Plane {
 		return this.state;
 	}
 
-	public void landed() {
-		state = PLANE_STATE.TAXING;		
-	}
-
-	public void land() {
-		state = PLANE_STATE.LANDING;		
-	}
 
 	public void setLastStateDate() {
 		date = Motor.getNowDate();
 		
 	}
+	
+	public void isOnAir(){
+		this.state = PLANE_STATE.AIR;
+	}
+	
+	public void isOnTaxiway(){
+		this.state = PLANE_STATE.TAXIWAY;
+	}
+
+	public void isAtGate(){
+		this.state = PLANE_STATE.GATE;
+	}
+	
+	public void isOnTrack(){
+		this.state = PLANE_STATE.TRACK;
+	}
+
 
 	
 	

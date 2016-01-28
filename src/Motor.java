@@ -7,7 +7,7 @@ public class Motor {
 	private static int simStep; //in minutes
 	
 	public static void setStartDate() {
-		c.set(2016,1,1,0,0,0);
+		c.set(2016,1,1,8,0,0);
 		simStep = 1;
 	}
 	public Calendar getSimulationCalendar(){
