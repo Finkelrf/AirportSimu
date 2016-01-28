@@ -4,11 +4,18 @@ import java.util.Random;
 
 class Tower {
 
-		private ArrayList<Plane> planeList;
+		public ArrayList<Plane> planeList;
 		private boolean planeWaitingToLand;
 		private ArrayList<Integer> takeOffList;
 		private ArrayList<Integer> landList;
 		
+		public int getLandListSize(){
+			return landList.size();
+		}
+		
+		public int getTakeOffList(){
+			return takeOffList.size();
+		}		
 		
 		public void addToTakeOffList(int id){
 			takeOffList.add(id);
@@ -95,8 +102,8 @@ class Tower {
 
 		public void notifyTakeOff(Plane p) {
 			//remove plane 
-			planeList.remove(p);
-			p.writeLog();
+			//planeList.remove(p);
+			//p.writeLog();
 			//save log
 		}
 

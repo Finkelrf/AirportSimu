@@ -104,13 +104,14 @@ class Track{
 								Measure.getRet().addTakeOff(a.getTower().getPlaneById(this.plane).getWaitingTime());
 							a.getTower().rmFirstFromTakeOffList();
 							a.getTrack().setDelayToTakeOff();	
+							a.getTower().getPlaneById(toTakeOff).setLastStateDate();
 						}
 					}else{
 						//free gates
-						if(toLand != -1){
+						
+						if(toLand != -1 ){
 							//track is given to land plane
 							this.state = TrackState.WAITING_PLANE_LAND;
-							a.getTower().getPlaneById(toLand).setLastStateDate();
 							//check if plane spend too much time waiting to take off
 							a.getTrack().setDelayToLand();
 							int planeId = a.getTower().sendPermissionToLand();
@@ -122,6 +123,7 @@ class Track{
 								long time = p.getWaitingTime();
 								Measure.getRet().addLand(time);
 							}
+							a.getTower().getPlaneById(toLand).setLastStateDate();
 							a.getTower().rmFirstFromLandList();
 						}else if(toTakeOff != -1){
 							//track is given to take off plane
@@ -136,6 +138,7 @@ class Track{
 							}
 							a.getTower().rmFirstFromTakeOffList();
 							a.getTrack().setDelayToTakeOff();	
+							a.getTower().getPlaneById(toTakeOff).setLastStateDate();
 						}
 					}
 				}
