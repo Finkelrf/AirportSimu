@@ -1,3 +1,4 @@
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
@@ -14,38 +15,39 @@ public class Airport {
 	}
 
 	public enum GateState {
-		GATE_AVAILABLE, GATE_UNAVAILABLE
+		GATE_AVAILABLE, GATE_UNAVAILABLE, NEW_PLANE, DISEMBARKATION_PASSENGERS, PREPARING_PLANE, EMBARKATION
 	}
 
 	public enum TaxiwayState {
-		TAXIWAY_AVAILABLE, TAXIWAY_UNAVAILABLE, NEW_PLANE
+		TAXIWAY_AVAILABLE, TAXIWAY_UNAVAILABLE, NEW_PLANE, OCCUPY
 	}
 
 	private Track track = new Track();
 	private Gate[] gates = new Gate[NUMBER_OF_GATES];
 	private Taxiway taxiways[] = new Taxiway[NUMBER_OF_TAXIWAYS];
-	private Tour tour;
+	private Tower tower;
 
 	public Airport() {
 		track.free();
 		for (int i = 0; i < NUMBER_OF_GATES; i++) {
 			gates[i] = new Gate();
 			gates[i].enable();
+			gates[i].setGateId(i);
 		}
 
 		for (int i = 0; i < NUMBER_OF_TAXIWAYS; i++) {
 			taxiways[i] = new Taxiway();
 			taxiways[i].enable();
 		}
-		tour = new Tour();
+		tower = new Tower();
 	}
 
 	public int fligthListSize() {
-		return tour.planeList.size();
+		return tower.planeList.size();
 	}
 
-	public Tour getTour() {
-		return tour;
+	public Tower getTower() {
+		return tower;
 	}
 	
 	public Track getTrack(){
@@ -59,13 +61,22 @@ public class Airport {
 	public Taxiway[] getTaxiways() {
 		return taxiways;
 	}
+	
+	public int getFreeGateId() {
+		for (int i = 0; i < getGates().length; i++) {
+			if(getGates()[i].isAvailable()){
+				return i;
+			}
+		}
+		return -1;
+	}
 
-	class Tour {
+	class Tower {
 
 		private ArrayList<Plane> planeList;
 		boolean planeWaitingToLand;
 
-		public Tour() {
+		public Tower() {
 			planeList = new ArrayList<Plane>();
 			planeWaitingToLand = false;
 		}
@@ -139,20 +150,20 @@ public class Airport {
 			switch (state) {
 			case WAITING_PLANE_LAND:
 				if(plane != -1){
-					if(Motor.getTimePassed(a.getTour().getPlaneById(plane).getLastStateDate())>delayToLand){
-						a.getTour().getPlaneById(plane).land();
-						System.out.println("Plane "+a.getTour().getPlaneById(plane).getId()+" landing");
+					if(Motor.getTimePassed(a.getTower().getPlaneById(plane).getLastStateDate())>=delayToLand){
+						a.getTower().getPlaneById(plane).land();
+						System.out.println(a.getTower().getPlaneById(plane).getId()+" landing");
 						delayToLand = LAND_TIME;
 						state = TrackState.PLANE_LANDING;
-						a.getTour().getPlaneById(plane).setLastStateDate();
+						a.getTower().getPlaneById(plane).setLastStateDate();
 
 					}
 				}
 				break;
 			case PLANE_LANDING:
-				if(Motor.getTimePassed(a.getTour().getPlaneById(plane).getLastStateDate())>delayToLand){
-					a.getTour().getPlaneById(plane).landed();
-					System.out.println("Plane "+a.getTour().getPlaneById(plane).getId()+" sucessfully landed");
+				if(Motor.getTimePassed(a.getTower().getPlaneById(plane).getLastStateDate())>delayToLand){
+					a.getTower().getPlaneById(plane).landed();
+					System.out.println(a.getTower().getPlaneById(plane).getId()+" sucessfully landed");
 					state = TrackState.PLANE_LANDED;
 					
 					//plane landed, now taxing
@@ -184,10 +195,20 @@ public class Airport {
 	}
 	
 	class Gate{
+		private static final long DISEMBARKATION_TIME = 10;
+		private static final long PLANE_PREPARATION_TIME = 30;
+		private static final long EMBARKATION_TIME = 20;
 		GateState state;
+		int plane;
+		long delay;
+		int gateId;
 		
 		public void enable() {
 			state = GateState.GATE_AVAILABLE;
+		}
+
+		public void setGateId(int id) {
+			this.gateId = id;
 		}
 
 		public void disable() {
@@ -196,6 +217,49 @@ public class Airport {
 
 		public boolean isAvailable() {
 			return state == GateState.GATE_AVAILABLE;
+		}
+
+		public void newPlane(int plane) {
+			this.plane = plane;
+			state = GateState.NEW_PLANE;
+		}
+		public void handler(Airport a){
+			switch (this.state) {
+			case NEW_PLANE:
+				System.out.println(this.plane +" arrived to gate "+this.gateId);
+				this.state = GateState.DISEMBARKATION_PASSENGERS;
+				this.delay = DISEMBARKATION_TIME;
+				a.getTower().getPlaneById(plane).setLastStateDate();
+				break;
+			case DISEMBARKATION_PASSENGERS:
+				if((Motor.getTimePassed(a.getTower().getPlaneById(plane).getLastStateDate()))>=delay){
+					System.out.println(this.plane+" Disembarkation");
+					this.state = GateState.PREPARING_PLANE;
+					this.delay = PLANE_PREPARATION_TIME;
+					a.getTower().getPlaneById(plane).setLastStateDate();
+				}
+				break;
+			case PREPARING_PLANE:
+				if((Motor.getTimePassed(a.getTower().getPlaneById(plane).getLastStateDate()))>=delay){
+					System.out.println(this.plane+" Preparation");
+					this.state = GateState.EMBARKATION;
+					this.delay = EMBARKATION_TIME;
+					a.getTower().getPlaneById(plane).setLastStateDate();
+					
+					//TODO get a new flight number from tower
+				}
+				break;
+			case EMBARKATION:
+				this.state = GateState.GATE_AVAILABLE;
+				break;
+			case GATE_AVAILABLE:
+			case GATE_UNAVAILABLE:
+				break;
+
+
+			default:
+				break;
+			}
 		}
 	}
 	
@@ -228,10 +292,25 @@ public class Airport {
 		public void handler(Airport a) {
 			switch (state) {
 			case NEW_PLANE:
-				System.out.println("new plane in the arrive taxiway ");
+				System.out.println(this.plane+" in the arrive taxiway ");
 				//define time in the taxyway
-				a.getTour().getPlaneById(plane).setLastStateDate();
+				a.getTower().getPlaneById(plane).setLastStateDate();
 				delay = randomDelay();
+				state = TaxiwayState.OCCUPY;
+				break;
+			case OCCUPY:
+				//check if plane still in the tawiway
+				if(Motor.getTimePassed(a.getTower().getPlaneById(plane).getLastStateDate())>=delay){
+					//taxing time has passed
+					int gateId = a.getFreeGateId();
+					if(gateId != -1){
+						a.getGates()[gateId].newPlane(plane);
+						this.state = TaxiwayState.TAXIWAY_AVAILABLE;
+					}else{
+						System.out.println(this.plane+" No free gates");
+					}
+					
+				}
 				break;
 			case TAXIWAY_AVAILABLE:
 			case TAXIWAY_UNAVAILABLE:
@@ -242,5 +321,7 @@ public class Airport {
 			}			
 		}
 	}
+
+	
 
 }
