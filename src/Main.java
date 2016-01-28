@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.Random;
 
 
@@ -21,14 +22,30 @@ public class Main {
 		}
 		return false;
 	}
-	
-
-	
-	
 
 	public static void main(String[] args) {
 		Airport a = new Airport();
 		Motor.setStartDate();
+		
+		try {
+			CsvManager cm = new CsvManager();
+			
+			cm.registerData(new String []{"10","20","30","40","50"});
+			cm.registerData(new String []{"10","20","30","30","40","50"});
+			cm.registerData(new String []{"10","20","30","30","40","50"});
+			cm.registerData(new String []{"10","20","30","30","40","60"});
+			
+			cm.registerData("teste", 2, 2);
+			
+			System.out.println(cm.getData(2));
+			System.out.println(cm.getData(2, 2));
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("Fecha o arquivo fdp..");
+		}
+		
 		
 		for (int i = 0; i < 50; i++) {
 			int planeNumber = a.getTour().registerNewAproache();
