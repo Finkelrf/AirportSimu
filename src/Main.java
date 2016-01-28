@@ -31,7 +31,7 @@ public class Main {
 		Motor.setStartDate();
 		
 		for (int i = 0; i < 50; i++) {
-			int planeNumber = a.getTour().registerNewAproache();
+			int planeNumber = a.getTower().registerNewAproache();
 			System.out.println("Plane P"+planeNumber+" is waiting to land");
 		}
 
@@ -42,24 +42,27 @@ public class Main {
 			
 			//add new plane
 			if(randomPlaneArriver()){
-				int planeNumber = a.getTour().registerNewAproache();
+				int planeNumber = a.getTower().registerNewAproache();
 				System.out.println("Plane P"+planeNumber+" is waiting to land");
 			}
 			
 			
 			//check if is possible to land
-			if(a.getTrack().isAvailable() && a.getTaxiways()[1].isAvailable() && a.getTour().isPlaneWaitingToLand()){
+			if(a.getTrack().isAvailable() && a.getTaxiways()[1].isAvailable() && a.getTower().isPlaneWaitingToLand()){
 				System.out.println("Land permitted");
 				//set track as unavailable
 				a.getTrack().occupy();
 				a.getTrack().setDelayToLand();
-				int planeId = a.getTour().sendPermissionToLand();
+				int planeId = a.getTower().sendPermissionToLand();
 				a.getTrack().setPlane(planeId);
 			}
 			
 			a.getTrack().handler(a);
 			a.getTaxiways()[Airport.TAXIWAY_ARRIVE].handler(a);
 			//a.getTaxiways()[Airport.TAXIWAY_LEAVE].handler(a);
+			for (int j = 0; j < a.getGates().length; j++) {
+				a.getGates()[j].handler(a);
+			}
 			
 			
 			
