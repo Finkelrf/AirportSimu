@@ -81,9 +81,6 @@ public class Main {
 				a.getGates()[j].handler(a);
 			}
 			
-			
-			
-			
 		}
 		
 	}

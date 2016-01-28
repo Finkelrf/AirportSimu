@@ -20,7 +20,7 @@ public class CsvManager {
 		
 		dataList = new ArrayList<String[]>();
 		
-		csvOutput = new CSVWriter(new FileWriter(outputFile),'\t');
+		csvOutput = new CSVWriter(new FileWriter(outputFile),';');
 		boolean alreadyExists = new File(outputFile).exists();
 		System.out.println(alreadyExists);
 				
@@ -33,7 +33,7 @@ public class CsvManager {
 	}
 	
 	public void registerData(String[] data) throws IOException{
-		csvOutput = new CSVWriter(new FileWriter(outputFile),'\t');
+		csvOutput = new CSVWriter(new FileWriter(outputFile),';');
 		dataList.add(data);
 	    csvOutput.writeAll(dataList);      
 	    csvOutput.close();	    
@@ -54,10 +54,6 @@ public class CsvManager {
 		this.dataList.add(data);
 	}
 	
-	public void setData(String data, int row, int column){
-		this.dataList.get(row)[column] = data;
-	}
-	
 	public String[] getData(int row){
 		return this.dataList.get(row);
 	}
@@ -68,8 +64,5 @@ public class CsvManager {
 	
 	public ArrayList<String[]> getDataList(){
 		return dataList;
-	}
-	
-	
-
+	}	
 }
