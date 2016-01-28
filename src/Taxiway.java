@@ -13,6 +13,12 @@ class Taxiway{
 			TAXIWAY_AVAILABLE, TAXIWAY_UNAVAILABLE, NEW_PLANE, OCCUPY
 		}
 		
+		public Taxiway() {
+			this.state = TaxiwayState.TAXIWAY_AVAILABLE;
+			this.delay = -1;
+			this.id = -1;
+			this.plane = -1;
+		}
 		public void setId(int id){
 			this.id = id;
 		}
@@ -39,6 +45,7 @@ class Taxiway{
 		}
 
 		public void handler(Airport a) {
+			System.out.println("taxiway "+id+" plane "+this.plane);
 			switch (state) {
 			case NEW_PLANE:
 				System.out.println(this.plane+" is in the taxiway "+this.id);
@@ -54,6 +61,8 @@ class Taxiway{
 				if(Motor.getTimePassed(a.getTower().getPlaneById(plane).getLastStateDate())>=delay){
 					if(this.id == TAXIWAY_ARRIVE){
 						//taxing time has passed
+						//save log
+						a.getTower().getPlaneById(plane).addLog("taxing chegada: "+Motor.getTimePassed(a.getTower().getPlaneById(plane).getLastStateDate()));
 						int gateId = a.getFreeGateId();
 						if(gateId != -1){
 							a.getGates()[gateId].newPlane(plane);
@@ -65,6 +74,8 @@ class Taxiway{
 						}
 					}else{
 						if(a.getTrack().isAvailable()){
+							//save log
+							a.getTower().getPlaneById(plane).addLog("taxing saida: "+Motor.getTimePassed(a.getTower().getPlaneById(plane).getLastStateDate()));
 							System.out.println(this.plane+" is in the track");
 							this.state = TaxiwayState.TAXIWAY_AVAILABLE;
 							a.getTower().addToTakeOffList(this.plane);						

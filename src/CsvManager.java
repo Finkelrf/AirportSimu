@@ -8,15 +8,15 @@ import java.util.Date;
 import au.com.bytecode.opencsv.*;
 
 public class CsvManager {
-	DateFormat dateFormat = new SimpleDateFormat("ddMMyyyy-HHmmss"); 
-	Date date = new Date();
-	private String outputFile = dateFormat.format(date)+"-log.csv";
+	static DateFormat dateFormat = new SimpleDateFormat("ddMMyyyy-HHmmss"); 
+	static Date date = new Date();
+	private static String outputFile = dateFormat.format(date)+"-log.csv";
 	
-	private CSVWriter csvOutput;
+	private static CSVWriter csvOutput;
 	
-	private ArrayList<String[]> dataList;
+	private static ArrayList<String[]> dataList;
 
-	public CsvManager() throws IOException{
+	public static void csvManagerInit() throws IOException{
 		
 		dataList = new ArrayList<String[]>();
 		
@@ -32,14 +32,14 @@ public class CsvManager {
 		}
 	}
 	
-	public void registerData(String[] data) throws IOException{
+	public static void registerData(String[] data) throws IOException{
 		csvOutput = new CSVWriter(new FileWriter(outputFile),';');
 		dataList.add(data);
 	    csvOutput.writeAll(dataList);      
 	    csvOutput.close();	    
 	}
 	
-	public void registerData(String data, int row, int column) throws IOException{
+	public static void registerData(String data, int row, int column) throws IOException{
 		csvOutput = new CSVWriter(new FileWriter(outputFile),';');
 		dataList.get(row)[column] = data;
 	    csvOutput.writeAll(dataList);      

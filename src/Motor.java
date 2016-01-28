@@ -35,10 +35,6 @@ public class Motor {
 		return (delay);
 	}
 	
-//	public static void main(String[] args) {
-//		Motor.setStartDate();
-//		System.out.println(Motor.isWeekend());
-//	}
 
 }
 

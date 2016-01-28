@@ -96,6 +96,7 @@ class Tower {
 		public void notifyTakeOff(Plane p) {
 			//remove plane 
 			planeList.remove(p);
+			p.writeLog();
 			//save log
 		}
 

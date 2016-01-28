@@ -1,3 +1,5 @@
+
+
 class Gate{
 		private static final long DISEMBARKATION_TIME = 10;
 		private static final long PLANE_PREPARATION_TIME = 30;
@@ -9,6 +11,13 @@ class Gate{
 
 		public enum GateState {
 			GATE_AVAILABLE, GATE_UNAVAILABLE, NEW_PLANE, DISEMBARKATION_PASSENGERS, PREPARING_PLANE, EMBARKATION, WAITING_FOR_TAXIWAY
+		}
+
+		public Gate() {
+			this.state = GateState.GATE_AVAILABLE;
+			this.delay = -1;
+			this.gateId = -1;
+			this.plane = -1;
 		}
 		
 		public void enable() {
@@ -32,6 +41,7 @@ class Gate{
 			state = GateState.NEW_PLANE;
 		}
 		public void handler(Airport a){
+			System.out.println("gate "+gateId+" plane "+this.plane);
 			switch (this.state) {
 			case NEW_PLANE:
 				System.out.println(this.plane +" arrived to gate "+this.gateId);

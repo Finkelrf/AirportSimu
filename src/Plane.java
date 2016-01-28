@@ -1,3 +1,5 @@
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -5,6 +7,7 @@ public class Plane {
 	private int id;
 	private PLANE_STATE state;
 	private Date date;
+	private ArrayList<String> log;
 	
 	public enum PLANE_STATE{
 		AIR,
@@ -17,8 +20,24 @@ public class Plane {
 		this.id = 0;
 		this.date = date;
 		this.state = PLANE_STATE.AIR;
+		this.log = new ArrayList<String>();
 	}
 	
+	public void addLog(String s){
+		log.add(s);
+	}
+	
+	public void writeLog(){
+		String [] tempS = new String[log.size()];
+		tempS = log.toArray(tempS);
+		try {
+			CsvManager.registerData(tempS);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("Error to write in file");
+		}
+	}
 	public int setId(int id){
 		this.id = id;
 		return this.id;
@@ -57,7 +76,10 @@ public class Plane {
 		this.state = PLANE_STATE.TRACK;
 	}
 
-
+	public long getWaitingTime(){
+		long time = Motor.getTimePassed(this.getLastStateDate());
+		return time;
+	}
 	
 	
 }

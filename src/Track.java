@@ -11,12 +11,19 @@ class Track{
 			TRACK_AVAILABLE, TRACK_UNAVAILABLE,WAITING_PLANE_LAND,PLANE_LANDING, PLANE_LANDED, TAKING_OFF, PLANE_TOOK_OFF,
 		}
 		
+
+		public Track() {
+			this.state = TrackState.TRACK_AVAILABLE;
+			this.delay = -1;
+			this.plane = -1;
+		}
+		
 		public int getDelayToLand() {
 			return delay;
 		}
 
 		private int randomDelayToLand(){
-			return new Random().nextInt()%3;
+			return (new Random().nextInt()%3 )+ 2;
 		}
 		
 		public void setDelayToLand() {
@@ -33,6 +40,7 @@ class Track{
 		}
 		
 		public void handler(Airport a){
+			System.out.println("track plane "+this.plane);
 			switch (state) {
 			case WAITING_PLANE_LAND:
 				if(plane != -1){
@@ -40,6 +48,8 @@ class Track{
 						System.out.println(a.getTower().getPlaneById(plane).getId()+" landing");
 						delay = LAND_TIME;
 						state = TrackState.PLANE_LANDING;
+						//save log
+						a.getTower().getPlaneById(plane).addLog("Approach pista: "+Motor.getTimePassed(a.getTower().getPlaneById(plane).getLastStateDate()));
 						a.getTower().getPlaneById(plane).setLastStateDate();
 
 					}
@@ -88,6 +98,10 @@ class Track{
 							//track is given to take off plane
 							this.plane = toTakeOff;
 							this.state = TrackState.TAKING_OFF;
+							//save log
+							a.getTower().getPlaneById(plane).addLog("Espera takeoff: "+Motor.getTimePassed(a.getTower().getPlaneById(toTakeOff).getLastStateDate()));
+							if(a.getTower().getPlaneById(this.plane).getWaitingTime()>=Retard.RETARD_TIME)
+								Measure.getRet().addTakeOff(a.getTower().getPlaneById(this.plane).getWaitingTime());
 							a.getTower().rmFirstFromTakeOffList();
 							a.getTrack().setDelayToTakeOff();	
 						}
@@ -96,14 +110,30 @@ class Track{
 						if(toLand != -1){
 							//track is given to land plane
 							this.state = TrackState.WAITING_PLANE_LAND;
+							a.getTower().getPlaneById(toLand).setLastStateDate();
+							//check if plane spend too much time waiting to take off
 							a.getTrack().setDelayToLand();
 							int planeId = a.getTower().sendPermissionToLand();
 							a.getTrack().setPlane(planeId);
+							//save log
+							a.getTower().getPlaneById(plane).addLog("Espera pista: "+Motor.getTimePassed(a.getTower().getPlaneById(plane).getLastStateDate()));
+							Plane p = a.getTower().getPlaneById(this.plane);
+							if(p.getWaitingTime()>=Retard.RETARD_TIME){
+								long time = p.getWaitingTime();
+								Measure.getRet().addLand(time);
+							}
 							a.getTower().rmFirstFromLandList();
 						}else if(toTakeOff != -1){
 							//track is given to take off plane
 							this.plane = toTakeOff;
 							this.state = TrackState.TAKING_OFF;
+							//save log
+							a.getTower().getPlaneById(plane).addLog("Espera take off: "+Motor.getTimePassed(a.getTower().getPlaneById(toTakeOff).getLastStateDate()));
+							Plane p = a.getTower().getPlaneById(this.plane);
+							if(p.getWaitingTime()>=Retard.RETARD_TIME){
+								long time = p.getWaitingTime();
+								Measure.getRet().addTakeOff(time);
+							}
 							a.getTower().rmFirstFromTakeOffList();
 							a.getTrack().setDelayToTakeOff();	
 						}

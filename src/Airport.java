@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class Airport {
 
-	private static final int NUMBER_OF_GATES = 6;
+	private static final int NUMBER_OF_GATES = 8;
 	private static final int NUMBER_OF_TAXIWAYS = 2;
 	
 	private Track track = new Track();
