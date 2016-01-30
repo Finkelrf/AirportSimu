@@ -49,8 +49,10 @@ class Track{
 						delay = LAND_TIME;
 						state = TrackState.PLANE_LANDING;
 						//save log
+						Measure.getFreq().addArrival();
 						a.getTower().getPlaneById(plane).addLog("Approach pista: "+Motor.getTimePassed(a.getTower().getPlaneById(plane).getLastStateDate()));
 						a.getTower().getPlaneById(plane).setLastStateDate();
+						
 
 					}
 				}
@@ -77,9 +79,10 @@ class Track{
 				break;
 			case TAKING_OFF: 
 				Date d= a.getTower().getPlaneById(plane).getLastStateDate();
-				if(Motor.getTimePassed(d)>delay){
+				if(Motor.getTimePassed(d)>delay && Motor.airportIsOpen()){
 					System.out.println(this.plane+" sucessfully take off");
 					state = TrackState.TRACK_AVAILABLE;
+					Measure.getFreq().addDepart();
 					//notify tower 
 					a.getTower().notifyTakeOff(a.getTower().getPlaneById(plane));
 					this.delay = -1;

@@ -2,29 +2,27 @@ import java.io.IOException;
 import java.util.Random;
 
 
-public class Main {
-	
-	
+public class Main {	
 	public static boolean randomPlaneArriver(){
-		if(Motor.getNowDate().getHours()<22 && Motor.getNowDate().getHours()>7){
+		if(Motor.getNowDate().getHours()<22 && Motor.getNowDate().getHours()>=7){
 			if(Motor.isWeekend()){
-				//TODO random com media de 40 minutos
-				if(new Random().nextInt(40) == 0){
+				//random com media de 40 minutos
+				if(new Random().nextInt(40) == 20){
 					return true;
 				}else{
 					return false;
 				}
 			}else{
-				if((Motor.getNowDate().getHours()>7 && Motor.getNowDate().getHours()>10)||(Motor.getNowDate().getHours()>17 && Motor.getNowDate().getHours()>19)){
-					//TODO random com media de 10 minutos
-					if(new Random().nextInt(10) == 0){
+				if((Motor.getNowDate().getHours()>=7 && Motor.getNowDate().getHours()<10)||(Motor.getNowDate().getHours()>=17 && Motor.getNowDate().getHours()<19)){
+					//random com media de 10 minutos
+					if(new Random().nextInt(10) == 5){
 						return true;
 					}else{
 						return false;
 					}
 				}else{
-					//TODO random com media de 20 minutos
-					if(new Random().nextInt(20) == 0){
+					//random com media de 20 minutos
+					if(new Random().nextInt(20) == 10){
 						return true;
 					}else{
 						return false;
@@ -39,7 +37,7 @@ public class Main {
 	
 	
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		Airport a = new Airport();
 		Motor.setStartDate();
 		try {
@@ -49,13 +47,6 @@ public class Main {
 			e.printStackTrace();
 			System.out.println("Error to initiate Csv Manager");
 		}
-//		
-//		for (int i = 0; i < 100; i++) {
-//			int planeNumber = a.getTower().registerNewAproache(a);
-//			a.getTower().addToLandList(planeNumber);
-//			System.out.println("Plane P"+planeNumber+" is waiting to land");
-//		}
-
 		
 		for (int i = 0; i < 3*30*24*60; i++) {
 			//Step up the system
@@ -82,6 +73,7 @@ public class Main {
 		}
 		
 		Measure.getRet().printAll();
+		Measure.getFreq().printFreqLog();
 		
 	}
 }

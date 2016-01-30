@@ -65,4 +65,13 @@ public class CsvManager {
 	public ArrayList<String[]> getDataList(){
 		return dataList;
 	}	
+	public static void setFreqFile(){
+//		try {
+//			dataList = new ArrayList<String[]>();
+//			csvOutput = new CSVWriter(new FileWriter("freqLog.csv"),';');
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+	}
 }

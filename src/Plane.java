@@ -28,15 +28,15 @@ public class Plane {
 	}
 	
 	public void writeLog(){
-		String [] tempS = new String[log.size()];
-		tempS = log.toArray(tempS);
-		try {
-			CsvManager.registerData(tempS);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.out.println("Error to write in file");
-		}
+//		String [] tempS = new String[log.size()];
+//		tempS = log.toArray(tempS);
+//		try {
+//			CsvManager.registerData(tempS);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			System.out.println("Error to write in file");
+//		}
 	}
 	public int setId(int id){
 		this.id = id;
