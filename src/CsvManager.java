@@ -21,15 +21,6 @@ public class CsvManager {
 		dataList = new ArrayList<String[]>();
 		
 		csvOutput = new CSVWriter(new FileWriter(outputFile),';');
-		boolean alreadyExists = new File(outputFile).exists();
-		System.out.println(alreadyExists);
-				
-		if (!alreadyExists)
-		{
-			csvOutput.writeNext("id");
-			csvOutput.writeNext("name");
-			System.out.println("aqui");
-		}
 	}
 	
 	public static void registerData(String[] data) throws IOException{
@@ -44,10 +35,6 @@ public class CsvManager {
 		dataList.get(row)[column] = data;
 	    csvOutput.writeAll(dataList);      
 	    csvOutput.close();	    
-	}
-	
-	public void readData(){
-		
 	}
 	
 	private void addData(String[] data){
